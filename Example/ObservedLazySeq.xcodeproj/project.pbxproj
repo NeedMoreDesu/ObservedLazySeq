@@ -7,14 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1B40369EE48F3E23357A95B7 /* Pods_ObservedLazySeq_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEC862C06AF62F6943965121 /* Pods_ObservedLazySeq_Tests.framework */; };
-		3DE714A235FA0A922B7B37B3 /* Pods_ObservedLazySeq_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F47DACACAC0D1FC3C7B16CDD /* Pods_ObservedLazySeq_Example.framework */; };
+		1A900D05FF48807BFFC7600F /* Pods_ObservedLazySeq_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A111C23D1F90CFEB00F62B76 /* Pods_ObservedLazySeq_Example.framework */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
+		A111C23A1F90CFE800F62B76 /* Pods_ObservedLazySeq_Example_ObservedLazySeq_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A111C23B1F90CFE800F62B76 /* Pods_ObservedLazySeq_Example_ObservedLazySeq_Tests.framework */; };
+		A111C23C1F90CFEB00F62B76 /* Pods_ObservedLazySeq_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A111C23D1F90CFEB00F62B76 /* Pods_ObservedLazySeq_Example.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,8 +29,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		17E99CEF748AE8CACBA297CF /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; name = README.md; path = ../README.md; sourceTree = "<group>"; };
-		2E1497F105A0F5BE95835838 /* ObservedLazySeq.podspec */ = {isa = PBXFileReference; includeInIndex = 1; name = ObservedLazySeq.podspec; path = ../ObservedLazySeq.podspec; sourceTree = "<group>"; };
+		0A7C60D3B767DCF2AE6F5ACB /* Pods_ObservedLazySeq_Example_ObservedLazySeq_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ObservedLazySeq_Example_ObservedLazySeq_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		17E99CEF748AE8CACBA297CF /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		2E1497F105A0F5BE95835838 /* ObservedLazySeq.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = ObservedLazySeq.podspec; path = ../ObservedLazySeq.podspec; sourceTree = "<group>"; };
 		3A4467592F65D47F32A64BBF /* Pods-ObservedLazySeq_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ObservedLazySeq_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ObservedLazySeq_Tests/Pods-ObservedLazySeq_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		4B367CD98439146339B3F613 /* Pods-ObservedLazySeq_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ObservedLazySeq_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ObservedLazySeq_Tests/Pods-ObservedLazySeq_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		597F004DB08B02974F5CAB4B /* Pods-ObservedLazySeq_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ObservedLazySeq_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ObservedLazySeq_Example/Pods-ObservedLazySeq_Example.debug.xcconfig"; sourceTree = "<group>"; };
@@ -43,8 +45,12 @@
 		607FACE51AFB9204008FA782 /* ObservedLazySeq_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ObservedLazySeq_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
-		6128A2107EDDB3B072DE02D0 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		6128A2107EDDB3B072DE02D0 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		79276FD4E5DEC8B0BD26BE31 /* Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests/Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		7F0C271532DC9DDA5396D30F /* Pods-ObservedLazySeq_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ObservedLazySeq_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-ObservedLazySeq_Example/Pods-ObservedLazySeq_Example.release.xcconfig"; sourceTree = "<group>"; };
+		971F6CE2669D6929F85D3539 /* Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests/Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		A111C23B1F90CFE800F62B76 /* Pods_ObservedLazySeq_Example_ObservedLazySeq_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_ObservedLazySeq_Example_ObservedLazySeq_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A111C23D1F90CFEB00F62B76 /* Pods_ObservedLazySeq_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_ObservedLazySeq_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F47DACACAC0D1FC3C7B16CDD /* Pods_ObservedLazySeq_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ObservedLazySeq_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FEC862C06AF62F6943965121 /* Pods_ObservedLazySeq_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ObservedLazySeq_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -54,7 +60,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3DE714A235FA0A922B7B37B3 /* Pods_ObservedLazySeq_Example.framework in Frameworks */,
+				1A900D05FF48807BFFC7600F /* Pods_ObservedLazySeq_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -62,7 +68,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1B40369EE48F3E23357A95B7 /* Pods_ObservedLazySeq_Tests.framework in Frameworks */,
+				A111C23C1F90CFEB00F62B76 /* Pods_ObservedLazySeq_Example.framework in Frameworks */,
+				A111C23A1F90CFE800F62B76 /* Pods_ObservedLazySeq_Example_ObservedLazySeq_Tests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,8 +79,11 @@
 		28255CA4F6DD094AB473A6B6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A111C23D1F90CFEB00F62B76 /* Pods_ObservedLazySeq_Example.framework */,
+				A111C23B1F90CFE800F62B76 /* Pods_ObservedLazySeq_Example_ObservedLazySeq_Tests.framework */,
 				F47DACACAC0D1FC3C7B16CDD /* Pods_ObservedLazySeq_Example.framework */,
 				FEC862C06AF62F6943965121 /* Pods_ObservedLazySeq_Tests.framework */,
+				0A7C60D3B767DCF2AE6F5ACB /* Pods_ObservedLazySeq_Example_ObservedLazySeq_Tests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -155,6 +165,8 @@
 				7F0C271532DC9DDA5396D30F /* Pods-ObservedLazySeq_Example.release.xcconfig */,
 				3A4467592F65D47F32A64BBF /* Pods-ObservedLazySeq_Tests.debug.xcconfig */,
 				4B367CD98439146339B3F613 /* Pods-ObservedLazySeq_Tests.release.xcconfig */,
+				971F6CE2669D6929F85D3539 /* Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests.debug.xcconfig */,
+				79276FD4E5DEC8B0BD26BE31 /* Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -285,18 +297,22 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-ObservedLazySeq_Tests/Pods-ObservedLazySeq_Tests-frameworks.sh",
+				"${SRCROOT}/Pods/Target Support Files/Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests/Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/LazySeq/LazySeq.framework",
+				"${BUILT_PRODUCTS_DIR}/ObservedLazySeq/ObservedLazySeq.framework",
 				"${BUILT_PRODUCTS_DIR}/Nimble/Nimble.framework",
 				"${BUILT_PRODUCTS_DIR}/Quick/Quick.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LazySeq.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObservedLazySeq.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Nimble.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Quick.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ObservedLazySeq_Tests/Pods-ObservedLazySeq_Tests-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests/Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		B0F12BAE6EFC1910FCA1A149 /* [CP] Embed Pods Frameworks */ = {
@@ -306,10 +322,12 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-ObservedLazySeq_Example/Pods-ObservedLazySeq_Example-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/LazySeq/LazySeq.framework",
 				"${BUILT_PRODUCTS_DIR}/ObservedLazySeq/ObservedLazySeq.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LazySeq.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObservedLazySeq.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -347,7 +365,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ObservedLazySeq_Tests/Pods-ObservedLazySeq_Tests-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests/Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FBBD827DC71FDB6D31A90496 /* [CP] Check Pods Manifest.lock */ = {
@@ -361,7 +379,7 @@
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-ObservedLazySeq_Tests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -549,7 +567,7 @@
 		};
 		607FACF31AFB9204008FA782 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3A4467592F65D47F32A64BBF /* Pods-ObservedLazySeq_Tests.debug.xcconfig */;
+			baseConfigurationReference = 971F6CE2669D6929F85D3539 /* Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests.debug.xcconfig */;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -570,7 +588,7 @@
 		};
 		607FACF41AFB9204008FA782 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4B367CD98439146339B3F613 /* Pods-ObservedLazySeq_Tests.release.xcconfig */;
+			baseConfigurationReference = 79276FD4E5DEC8B0BD26BE31 /* Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests.release.xcconfig */;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
