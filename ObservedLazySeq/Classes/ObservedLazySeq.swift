@@ -90,3 +90,15 @@ open class ObservedLazySeq<Type> {
         }
     }
 }
+
+public extension UITableView {
+    public func subscribeToObservedSections<Type>(observedLazySeqs: GeneratedSeq<ObservedLazySeq<Type>>, startingRows: [Int] = [], startingSection: Int = 0) {
+        for (section, observedLazySeq) in observedLazySeqs.enumerated() {
+            var startingRow = 0
+            if section < startingRows.count {
+                startingRow = startingRows[section]
+            }
+            observedLazySeq.subscribeTableView(tableView: self, startingIndex: startingRow, section: section + startingSection)
+        }
+    }
+}

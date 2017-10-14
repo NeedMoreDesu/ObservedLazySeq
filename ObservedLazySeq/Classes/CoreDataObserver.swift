@@ -87,18 +87,18 @@ open class CoreDataObserver: NSObject, NSFetchedResultsControllerDelegate {
                                         managedObjectContext: managedObjectContext,
                                         params: params)
         
-        return observer.setupObservedLazySeqs()
+        return observer.setupObservedSections()
     }
     
     public class func create(fetchRequest: NSFetchRequest<NSManagedObject>,
                              managedObjectContext: NSManagedObjectContext) -> LazySeq<ObservedLazySeq<NSManagedObject>> {
         let observer = CoreDataObserver(fetchRequest: fetchRequest, managedObjectContext: managedObjectContext)
         
-        return observer.setupObservedLazySeqs()
+        return observer.setupObservedSections()
     }
     
-    weak var observedLazySeqs: LazySeq<ObservedLazySeq<NSManagedObject>>?
-    private func setupObservedLazySeqs() -> LazySeq<ObservedLazySeq<NSManagedObject>> {
+    weak var observedSections: LazySeq<ObservedLazySeq<NSManagedObject>>?
+    private func setupObservedSections() -> LazySeq<ObservedLazySeq<NSManagedObject>> {
         let sections = LazySeq(count: { () -> Int in
             return self.controller.sections?.count ?? 0
         }) { (sectionIdx, _) -> ObservedLazySeq<NSManagedObject> in
@@ -115,19 +115,25 @@ open class CoreDataObserver: NSObject, NSFetchedResultsControllerDelegate {
             return observedLazySeq
         }
         
-        self.observedLazySeqs = sections
+        self.observedSections = sections
         
         return sections
     }
     
     public func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        for observedLazySeq in self.observedLazySeqs?.allObjects() ?? [] {
+        guard let seqs = self.observedSections else {
+            return
+        }
+        for observedLazySeq in seqs {
             observedLazySeq.willChangeContent?()
         }
     }
     
     public func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        for observedLazySeq in self.observedLazySeqs?.allObjects() ?? [] {
+        guard let seqs = self.observedSections else {
+            return
+        }
+        for observedLazySeq in seqs {
             observedLazySeq.didChangeContent?()
         }
     }
@@ -145,17 +151,17 @@ open class CoreDataObserver: NSObject, NSFetchedResultsControllerDelegate {
         case .insert:
             if let row = newIndexPath?.row,
                 let section = newIndexPath?.section {
-                self.observedLazySeqs?[section].insertFn?(row)
+                self.observedSections?[section].insertFn?(row)
             }
         case .delete:
             if let row = indexPath?.row,
                 let section = indexPath?.section {
-                self.observedLazySeqs?[section].deleteFn?(row)
+                self.observedSections?[section].deleteFn?(row)
             }
         case .update:
             if let row = indexPath?.row,
                 let section = indexPath?.section {
-                self.observedLazySeqs?[section].updateFn?(row)
+                self.observedSections?[section].updateFn?(row)
             }
         case .move:
             if let row = indexPath?.row,
@@ -163,10 +169,10 @@ open class CoreDataObserver: NSObject, NSFetchedResultsControllerDelegate {
                 let section = indexPath?.section,
                 let newSection = newIndexPath?.section {
                 if (section == newSection) {
-                    self.observedLazySeqs?[section].moveFn?(row, newRow)
+                    self.observedSections?[section].moveFn?(row, newRow)
                 } else {
-                    self.observedLazySeqs?[section].deleteFn?(row)
-                    self.observedLazySeqs?[newSection].insertFn?(newRow)
+                    self.observedSections?[section].deleteFn?(row)
+                    self.observedSections?[newSection].insertFn?(newRow)
                 }
             }
         }
