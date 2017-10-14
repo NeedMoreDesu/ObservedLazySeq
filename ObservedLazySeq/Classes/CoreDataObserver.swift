@@ -9,12 +9,13 @@ import Foundation
 import CoreData
 import LazySeq
 
-struct FetchRequestParameters {
+public struct FetchRequestParameters {
     var predicate: NSPredicate?
     var sortDescriptors: [NSSortDescriptor]?
+    var fetchBatchSize: Int?
 }
 
-class CoreDataObserver: NSObject, NSFetchedResultsControllerDelegate {
+open class CoreDataObserver: NSObject, NSFetchedResultsControllerDelegate {
     private var controller: NSFetchedResultsController<NSManagedObject>
     private class func fetchResultController(entityName: String,
                                              primaryKey: String,
@@ -22,12 +23,23 @@ class CoreDataObserver: NSObject, NSFetchedResultsControllerDelegate {
                                              params: FetchRequestParameters? = nil) -> NSFetchedResultsController<NSManagedObject> {
         let request = NSFetchRequest<NSManagedObject>(entityName: entityName)
         request.predicate = params?.predicate
-        request.fetchBatchSize = 20
-        if let sortDesc = params?.sortDescriptors {
-            request.sortDescriptors = sortDesc
-        } else {
-            request.sortDescriptors = [NSSortDescriptor(key: primaryKey, ascending: true)]
+        request.fetchBatchSize = params?.fetchBatchSize ?? 20
+        request.sortDescriptors = params?.sortDescriptors ?? [NSSortDescriptor(key: primaryKey, ascending: true)]
+        
+        let fetchedResultsController = NSFetchedResultsController<NSManagedObject>(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+        
+        do {
+            try fetchedResultsController.performFetch()
+        } catch {
+            abort()
         }
+        
+        return fetchedResultsController
+    }
+    
+    private class func fetchResultController(fetchRequest: NSFetchRequest<NSManagedObject>,
+                                             managedObjectContext: NSManagedObjectContext) -> NSFetchedResultsController<NSManagedObject> {
+        let request = fetchRequest
         
         let fetchedResultsController = NSFetchedResultsController<NSManagedObject>(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
         
@@ -54,42 +66,73 @@ class CoreDataObserver: NSObject, NSFetchedResultsControllerDelegate {
         
         fetchedResultController.delegate = self
     }
-    class func create(entityName: String,
+    
+    init(fetchRequest: NSFetchRequest<NSManagedObject>,
+         managedObjectContext: NSManagedObjectContext) {
+        let fetchedResultController = CoreDataObserver.fetchResultController(fetchRequest: fetchRequest,
+                                                                             managedObjectContext: managedObjectContext)
+        self.controller = fetchedResultController
+        
+        super.init()
+        
+        fetchedResultController.delegate = self
+    }
+    
+    public class func create(entityName: String,
                       primaryKey: String,
                       managedObjectContext: NSManagedObjectContext,
-                      params: FetchRequestParameters? = nil) -> ObservedLazySeq<NSManagedObject> {
+                      params: FetchRequestParameters? = nil) -> LazySeq<ObservedLazySeq<NSManagedObject>> {
         let observer = CoreDataObserver(entityName: entityName,
                                         primaryKey: primaryKey,
                                         managedObjectContext: managedObjectContext,
                                         params: params)
-        let observedLazySeq = ObservedLazySeq<NSManagedObject>(strongRefs: [observer])
-        observer.observedLazySeq = observedLazySeq
-        return observedLazySeq
+        
+        return observer.setupObservedLazySeqs()
     }
     
-    weak var observedLazySeq: ObservedLazySeq<NSManagedObject>? {
-        didSet {
-            observedLazySeq?.objs = LazySeq<NSManagedObject>(count: { () -> Int in
-                if let section = self.controller.sections?.first {
+    public class func create(fetchRequest: NSFetchRequest<NSManagedObject>,
+                             managedObjectContext: NSManagedObjectContext) -> LazySeq<ObservedLazySeq<NSManagedObject>> {
+        let observer = CoreDataObserver(fetchRequest: fetchRequest, managedObjectContext: managedObjectContext)
+        
+        return observer.setupObservedLazySeqs()
+    }
+    
+    weak var observedLazySeqs: LazySeq<ObservedLazySeq<NSManagedObject>>?
+    private func setupObservedLazySeqs() -> LazySeq<ObservedLazySeq<NSManagedObject>> {
+        let sections = LazySeq(count: { () -> Int in
+            return self.controller.sections?.count ?? 0
+        }) { (sectionIdx, _) -> ObservedLazySeq<NSManagedObject> in
+            let observedLazySeq = ObservedLazySeq<NSManagedObject>(strongRefs: [self])
+            observedLazySeq.objs = GeneratedSeq<NSManagedObject>(count: { () -> Int in
+                if let section = self.controller.sections?[sectionIdx] {
                     return section.numberOfObjects
                 }
                 return 0
             }, generate: { (idx, _) -> NSManagedObject? in
-                let obj = self.controller.object(at: IndexPath(row: idx, section: 0))
+                let obj = self.controller.object(at: IndexPath(row: idx, section: sectionIdx))
                 return obj
             })
+            return observedLazySeq
+        }
+        
+        self.observedLazySeqs = sections
+        
+        return sections
+    }
+    
+    public func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        for observedLazySeq in self.observedLazySeqs?.allObjects() ?? [] {
+            observedLazySeq.willChangeContent?()
         }
     }
     
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        self.observedLazySeq?.willChangeContent?()
+    public func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        for observedLazySeq in self.observedLazySeqs?.allObjects() ?? [] {
+            observedLazySeq.didChangeContent?()
+        }
     }
     
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        self.observedLazySeq?.didChangeContent?()
-    }
-    
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>,
+    public func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>,
                     didChange anObject: Any,
                     at indexPath: IndexPath?,
                     for type: NSFetchedResultsChangeType,
@@ -100,21 +143,31 @@ class CoreDataObserver: NSObject, NSFetchedResultsControllerDelegate {
         }
         switch type {
         case .insert:
-            if let row = newIndexPath?.row {
-                self.observedLazySeq?.insertFn?(row)
+            if let row = newIndexPath?.row,
+                let section = newIndexPath?.section {
+                self.observedLazySeqs?[section].insertFn?(row)
             }
         case .delete:
-            if let row = indexPath?.row {
-                self.observedLazySeq?.deleteFn?(row)
+            if let row = indexPath?.row,
+                let section = indexPath?.section {
+                self.observedLazySeqs?[section].deleteFn?(row)
             }
         case .update:
-            if let row = indexPath?.row {
-                self.observedLazySeq?.updateFn?(row)
+            if let row = indexPath?.row,
+                let section = indexPath?.section {
+                self.observedLazySeqs?[section].updateFn?(row)
             }
         case .move:
             if let row = indexPath?.row,
-                let newRow = newIndexPath?.row {
-                self.observedLazySeq?.moveFn?(row, newRow)
+                let newRow = newIndexPath?.row,
+                let section = indexPath?.section,
+                let newSection = newIndexPath?.section {
+                if (section == newSection) {
+                    self.observedLazySeqs?[section].moveFn?(row, newRow)
+                } else {
+                    self.observedLazySeqs?[section].deleteFn?(row)
+                    self.observedLazySeqs?[newSection].insertFn?(newRow)
+                }
             }
         }
     }
