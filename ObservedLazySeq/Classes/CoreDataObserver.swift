@@ -15,6 +15,13 @@ public struct FetchRequestParameters {
     var fetchBatchSize: Int?
 }
 
+class Weak<T: AnyObject> {
+    weak var value : T?
+    init (value: T) {
+        self.value = value
+    }
+}
+
 open class CoreDataObserver: NSObject, NSFetchedResultsControllerDelegate {
     private var controller: NSFetchedResultsController<NSManagedObject>
     private class func fetchResultController(entityName: String,
@@ -97,44 +104,39 @@ open class CoreDataObserver: NSObject, NSFetchedResultsControllerDelegate {
         return observer.setupObservedSections()
     }
     
-    weak var observedSections: LazySeq<ObservedLazySeq<NSManagedObject>>?
+    var observedSections: [Int: Weak<ObservedLazySeq<NSManagedObject>>] = [:]
     private func setupObservedSections() -> LazySeq<ObservedLazySeq<NSManagedObject>> {
         let sections = LazySeq(count: { () -> Int in
             return self.controller.sections?.count ?? 0
         }) { (sectionIdx, _) -> ObservedLazySeq<NSManagedObject> in
             let observedLazySeq = ObservedLazySeq<NSManagedObject>(strongRefs: [self])
             observedLazySeq.objs = GeneratedSeq<NSManagedObject>(count: { () -> Int in
-                if let section = self.controller.sections?[sectionIdx] {
-                    return section.numberOfObjects
+                if let sections = self.controller.sections {
+                    if sectionIdx < sections.count {
+                        return sections[sectionIdx].numberOfObjects
+                    }
                 }
                 return 0
             }, generate: { (idx, _) -> NSManagedObject? in
                 let obj = self.controller.object(at: IndexPath(row: idx, section: sectionIdx))
                 return obj
             })
+            self.observedSections[sectionIdx] = Weak(value: observedLazySeq)
             return observedLazySeq
         }
-        
-        self.observedSections = sections
         
         return sections
     }
     
     public func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        guard let seqs = self.observedSections else {
-            return
-        }
-        for observedLazySeq in seqs {
-            observedLazySeq.willChangeContent?()
+        for (_, observedLazySeq) in self.observedSections {
+            observedLazySeq.value?.willChangeContent?()
         }
     }
     
     public func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        guard let seqs = self.observedSections else {
-            return
-        }
-        for observedLazySeq in seqs {
-            observedLazySeq.didChangeContent?()
+        for (_, observedLazySeq) in self.observedSections {
+            observedLazySeq.value?.didChangeContent?()
         }
     }
     
@@ -151,17 +153,17 @@ open class CoreDataObserver: NSObject, NSFetchedResultsControllerDelegate {
         case .insert:
             if let row = newIndexPath?.row,
                 let section = newIndexPath?.section {
-                self.observedSections?[section].insertFn?(row)
+                self.observedSections[section]?.value?.insertFn?(row)
             }
         case .delete:
             if let row = indexPath?.row,
                 let section = indexPath?.section {
-                self.observedSections?[section].deleteFn?(row)
+                self.observedSections[section]?.value?.deleteFn?(row)
             }
         case .update:
             if let row = indexPath?.row,
                 let section = indexPath?.section {
-                self.observedSections?[section].updateFn?(row)
+                self.observedSections[section]?.value?.updateFn?(row)
             }
         case .move:
             if let row = indexPath?.row,
@@ -169,10 +171,10 @@ open class CoreDataObserver: NSObject, NSFetchedResultsControllerDelegate {
                 let section = indexPath?.section,
                 let newSection = newIndexPath?.section {
                 if (section == newSection) {
-                    self.observedSections?[section].moveFn?(row, newRow)
+                    self.observedSections[section]?.value?.moveFn?(row, newRow)
                 } else {
-                    self.observedSections?[section].deleteFn?(row)
-                    self.observedSections?[newSection].insertFn?(newRow)
+                    self.observedSections[section]?.value?.deleteFn?(row)
+                    self.observedSections[newSection]?.value?.insertFn?(newRow)
                 }
             }
         }
