@@ -11,10 +11,15 @@ import ObservedLazySeq
 import LazySeq
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    struct CellModel {
+        var cellTitle: String
+    }
+
     @IBOutlet weak var tableView: UITableView!
     weak var tableViewWeUse: UITableView!
 
-    var observedSections: LazySeq<ObservedLazySeq<Timestamp>>! {
+    var timestamps: GeneratedSeq<GeneratedSeq<Timestamp>>!
+    var observedSections: GeneratedSeq<ObservedLazySeq<CellModel>>! {
         didSet {
             self.observedSections.subscribeTableViewToObservedSections(tableViewGetter: { [weak self] () -> UITableView? in
                 return self?.tableViewWeUse // count be self?.tableView, but we explicitly show that we don't care if tableView is here at this moment, since we take it from `self` directly
@@ -26,7 +31,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.observedSections = Timestamp.createObservedLazySeq()
+        let observedSectionsOriginal = Timestamp.createObservedLazySeq()
+        self.timestamps = observedSectionsOriginal.map({ (observed) -> GeneratedSeq<Timestamp> in
+            return observed.objs
+        })
+        self.observedSections = observedSectionsOriginal.map({ (observed) -> ObservedLazySeq<CellModel> in
+            return observed.map({ (timestamp) -> CellModel in
+                let cellModel = CellModel(cellTitle: "\(timestamp.time!)")
+                return cellModel
+            })
+        })
         // oops, our tableView is loaded after observedSections is being set
         // but because tableView is passed as getter, it's no big deal
         self.tableViewWeUse = self.tableView
@@ -52,16 +66,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let timestamp = self.observedSections[indexPath.section].objs[indexPath.row]
+        let cellModel = self.observedSections[indexPath.section].objs[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "main", for: indexPath)
         
-        cell.textLabel?.text = "\(timestamp.time!)"
+        cell.textLabel?.text = cellModel.cellTitle
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let timestamp = self.observedSections[indexPath.section].objs[indexPath.row]
+        let timestamp = self.timestamps[indexPath.section][indexPath.row]
         timestamp.delete()
     }
 }
