@@ -1,5 +1,5 @@
 PODS:
-  - LazySeq (0.2.0)
+  - LazySeq (0.4.0)
   - Nimble (7.0.2)
   - ObservedLazySeq (0.1.0):
     - LazySeq
@@ -15,7 +15,7 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  LazySeq: 9c9bd76cd279f1fb8c76f5e59d16a4aaf052609d
+  LazySeq: 5ab1d259d12fe18a19fcbfac8e0d46ef5250b8a4
   Nimble: bfe1f814edabba69ff145cb1283e04ed636a67f2
   ObservedLazySeq: 021cb7d0a3d2f2588fd0f3f472a388abe63d5310
   Quick: 58d203b1c5e27fff7229c4c1ae445ad7069a7a08

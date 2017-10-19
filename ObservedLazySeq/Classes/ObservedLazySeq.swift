@@ -29,7 +29,7 @@ open class ObservedLazySeq<Type> {
         self.objs = objs
     }
     
-    public func map<ReturnType>(_ transform: @escaping (Type) -> ReturnType?) -> ObservedLazySeq<ReturnType> {
+    public func map<ReturnType>(_ transform: @escaping (Type) -> ReturnType) -> ObservedLazySeq<ReturnType> {
         let observed = ObservedLazySeq<ReturnType>(strongRefs: self.strongRefs, objs: self.objs.map(transform))
         self.subscribeDefault(observed: observed)
         return observed
