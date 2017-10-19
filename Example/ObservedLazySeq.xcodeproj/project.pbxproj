@@ -16,6 +16,9 @@
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		A111C23A1F90CFE800F62B76 /* Pods_ObservedLazySeq_Example_ObservedLazySeq_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A111C23B1F90CFE800F62B76 /* Pods_ObservedLazySeq_Example_ObservedLazySeq_Tests.framework */; };
 		A111C23C1F90CFEB00F62B76 /* Pods_ObservedLazySeq_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A111C23D1F90CFEB00F62B76 /* Pods_ObservedLazySeq_Example.framework */; };
+		A16D3C411F993A2D009D2AE7 /* CoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16D3C401F993A2D009D2AE7 /* CoreData.swift */; };
+		A16D3C431F9946DE009D2AE7 /* Timestamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16D3C421F9946DE009D2AE7 /* Timestamp.swift */; };
+		A1BCBC191F99381300A30D32 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A1BCBC171F99381300A30D32 /* Model.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +54,9 @@
 		971F6CE2669D6929F85D3539 /* Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests/Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		A111C23B1F90CFE800F62B76 /* Pods_ObservedLazySeq_Example_ObservedLazySeq_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_ObservedLazySeq_Example_ObservedLazySeq_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A111C23D1F90CFEB00F62B76 /* Pods_ObservedLazySeq_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_ObservedLazySeq_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A16D3C401F993A2D009D2AE7 /* CoreData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreData.swift; sourceTree = "<group>"; };
+		A16D3C421F9946DE009D2AE7 /* Timestamp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timestamp.swift; sourceTree = "<group>"; };
+		A1BCBC181F99381300A30D32 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		F47DACACAC0D1FC3C7B16CDD /* Pods_ObservedLazySeq_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ObservedLazySeq_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FEC862C06AF62F6943965121 /* Pods_ObservedLazySeq_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ObservedLazySeq_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -112,6 +118,7 @@
 		607FACD21AFB9204008FA782 /* Example for ObservedLazySeq */ = {
 			isa = PBXGroup;
 			children = (
+				A1BCBC161F99374A00A30D32 /* CoreData */,
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
@@ -156,6 +163,16 @@
 				6128A2107EDDB3B072DE02D0 /* LICENSE */,
 			);
 			name = "Podspec Metadata";
+			sourceTree = "<group>";
+		};
+		A1BCBC161F99374A00A30D32 /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				A1BCBC171F99381300A30D32 /* Model.xcdatamodeld */,
+				A16D3C401F993A2D009D2AE7 /* CoreData.swift */,
+				A16D3C421F9946DE009D2AE7 /* Timestamp.swift */,
+			);
+			name = CoreData;
 			sourceTree = "<group>";
 		};
 		FCB83637E23C68C7CE537892 /* Pods */ = {
@@ -298,6 +315,7 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests/Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/DATAStack/DATAStack.framework",
 				"${BUILT_PRODUCTS_DIR}/LazySeq/LazySeq.framework",
 				"${BUILT_PRODUCTS_DIR}/ObservedLazySeq/ObservedLazySeq.framework",
 				"${BUILT_PRODUCTS_DIR}/Nimble/Nimble.framework",
@@ -305,6 +323,7 @@
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DATAStack.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LazySeq.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObservedLazySeq.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Nimble.framework",
@@ -322,11 +341,13 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-ObservedLazySeq_Example/Pods-ObservedLazySeq_Example-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/DATAStack/DATAStack.framework",
 				"${BUILT_PRODUCTS_DIR}/LazySeq/LazySeq.framework",
 				"${BUILT_PRODUCTS_DIR}/ObservedLazySeq/ObservedLazySeq.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DATAStack.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LazySeq.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObservedLazySeq.framework",
 			);
@@ -393,8 +414,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A16D3C411F993A2D009D2AE7 /* CoreData.swift in Sources */,
+				A16D3C431F9946DE009D2AE7 /* Timestamp.swift in Sources */,
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
+				A1BCBC191F99381300A30D32 /* Model.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -634,6 +658,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		A1BCBC171F99381300A30D32 /* Model.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				A1BCBC181F99381300A30D32 /* Model.xcdatamodel */,
+			);
+			currentVersion = A1BCBC181F99381300A30D32 /* Model.xcdatamodel */;
+			path = Model.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 607FACC81AFB9204008FA782 /* Project object */;
 }

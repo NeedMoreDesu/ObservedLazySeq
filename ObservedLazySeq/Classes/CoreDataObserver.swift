@@ -22,18 +22,18 @@ class Weak<T: AnyObject> {
     }
 }
 
-open class CoreDataObserver: NSObject, NSFetchedResultsControllerDelegate {
-    private var controller: NSFetchedResultsController<NSManagedObject>
+open class CoreDataObserver<Type>: NSObject, NSFetchedResultsControllerDelegate where Type: NSManagedObject {
+    private var controller: NSFetchedResultsController<Type>
     private class func fetchResultController(entityName: String,
                                              primaryKey: String,
                                              managedObjectContext: NSManagedObjectContext,
-                                             params: FetchRequestParameters? = nil) -> NSFetchedResultsController<NSManagedObject> {
-        let request = NSFetchRequest<NSManagedObject>(entityName: entityName)
+                                             params: FetchRequestParameters? = nil) -> NSFetchedResultsController<Type> {
+        let request = NSFetchRequest<Type>(entityName: entityName)
         request.predicate = params?.predicate
         request.fetchBatchSize = params?.fetchBatchSize ?? 20
         request.sortDescriptors = params?.sortDescriptors ?? [NSSortDescriptor(key: primaryKey, ascending: true)]
         
-        let fetchedResultsController = NSFetchedResultsController<NSManagedObject>(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+        let fetchedResultsController = NSFetchedResultsController<Type>(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
         
         do {
             try fetchedResultsController.performFetch()
@@ -44,11 +44,11 @@ open class CoreDataObserver: NSObject, NSFetchedResultsControllerDelegate {
         return fetchedResultsController
     }
     
-    private class func fetchResultController(fetchRequest: NSFetchRequest<NSManagedObject>,
-                                             managedObjectContext: NSManagedObjectContext) -> NSFetchedResultsController<NSManagedObject> {
+    private class func fetchResultController(fetchRequest: NSFetchRequest<Type>,
+                                             managedObjectContext: NSManagedObjectContext) -> NSFetchedResultsController<Type> {
         let request = fetchRequest
         
-        let fetchedResultsController = NSFetchedResultsController<NSManagedObject>(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+        let fetchedResultsController = NSFetchedResultsController<Type>(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
         
         do {
             try fetchedResultsController.performFetch()
@@ -74,7 +74,7 @@ open class CoreDataObserver: NSObject, NSFetchedResultsControllerDelegate {
         fetchedResultController.delegate = self
     }
     
-    init(fetchRequest: NSFetchRequest<NSManagedObject>,
+    init(fetchRequest: NSFetchRequest<Type>,
          managedObjectContext: NSManagedObjectContext) {
         let fetchedResultController = CoreDataObserver.fetchResultController(fetchRequest: fetchRequest,
                                                                              managedObjectContext: managedObjectContext)
@@ -88,7 +88,7 @@ open class CoreDataObserver: NSObject, NSFetchedResultsControllerDelegate {
     public class func create(entityName: String,
                       primaryKey: String,
                       managedObjectContext: NSManagedObjectContext,
-                      params: FetchRequestParameters? = nil) -> LazySeq<ObservedLazySeq<NSManagedObject>> {
+                      params: FetchRequestParameters? = nil) -> LazySeq<ObservedLazySeq<Type>> {
         let observer = CoreDataObserver(entityName: entityName,
                                         primaryKey: primaryKey,
                                         managedObjectContext: managedObjectContext,
@@ -97,33 +97,35 @@ open class CoreDataObserver: NSObject, NSFetchedResultsControllerDelegate {
         return observer.setupObservedSections()
     }
     
-    public class func create(fetchRequest: NSFetchRequest<NSManagedObject>,
-                             managedObjectContext: NSManagedObjectContext) -> LazySeq<ObservedLazySeq<NSManagedObject>> {
+    public class func create(fetchRequest: NSFetchRequest<Type>,
+                             managedObjectContext: NSManagedObjectContext) -> LazySeq<ObservedLazySeq<Type>> {
         let observer = CoreDataObserver(fetchRequest: fetchRequest, managedObjectContext: managedObjectContext)
         
         return observer.setupObservedSections()
     }
     
-    var observedSections: [Int: Weak<ObservedLazySeq<NSManagedObject>>] = [:]
-    private func setupObservedSections() -> LazySeq<ObservedLazySeq<NSManagedObject>> {
+    var observedSections: [Int: Weak<ObservedLazySeq<Type>>] = [:]
+    private func setupObservedSections() -> LazySeq<ObservedLazySeq<Type>> {
         let sections = LazySeq(count: { () -> Int in
             return self.controller.sections?.count ?? 0
-        }) { (sectionIdx, _) -> ObservedLazySeq<NSManagedObject> in
-            let observedLazySeq = ObservedLazySeq<NSManagedObject>(strongRefs: [self])
-            observedLazySeq.objs = GeneratedSeq<NSManagedObject>(count: { () -> Int in
+        }) { (sectionIdx, _) -> ObservedLazySeq<Type> in
+            let observedLazySeq = ObservedLazySeq<Type>(strongRefs: [self])
+            observedLazySeq.objs = GeneratedSeq<Type>(count: { () -> Int in
                 if let sections = self.controller.sections {
                     if sectionIdx < sections.count {
                         return sections[sectionIdx].numberOfObjects
                     }
                 }
                 return 0
-            }, generate: { (idx, _) -> NSManagedObject? in
+            }, generate: { (idx, _) -> Type? in
                 let obj = self.controller.object(at: IndexPath(row: idx, section: sectionIdx))
                 return obj
             })
             self.observedSections[sectionIdx] = Weak(value: observedLazySeq)
             return observedLazySeq
         }
+        
+        let _ = sections.first // implicitly trigger first row ObservedLazySeq creation so strongRef isn't wasted
         
         return sections
     }

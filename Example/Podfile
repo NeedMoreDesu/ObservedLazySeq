@@ -2,6 +2,7 @@ use_frameworks!
 
 target 'ObservedLazySeq_Example' do
   pod 'ObservedLazySeq', :path => '../'
+  pod 'DATAStack', '~> 6'
 
   target 'ObservedLazySeq_Tests' do
       pod 'Quick', '~> 1.2.0'
@@ -9,3 +10,14 @@ target 'ObservedLazySeq_Example' do
   end
 end
 
+def prepareToSwift3(installer)
+    installer.pods_project.targets.each do |target|
+        target.build_configurations.each do |config|
+            config.build_settings['SWIFT_VERSION'] = '3.0'
+        end
+    end
+end
+
+post_install do |installer|
+    prepareToSwift3 installer
+end

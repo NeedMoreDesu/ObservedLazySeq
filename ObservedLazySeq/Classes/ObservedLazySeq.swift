@@ -9,7 +9,7 @@
 import UIKit
 import LazySeq
 
-open class ObservedLazySeq<Type> {
+open class ObservedLazySeq<Type>: TableViewRowSubscriber {
     public private(set) var strongRefs: [AnyObject]
     
     public var objs: GeneratedSeq<Type>!
@@ -71,40 +71,47 @@ open class ObservedLazySeq<Type> {
         }
     }
     
-    public func subscribeTableView(tableView: UITableView, startingIndex: Int = 0, section: Int = 0) {
-        self.willChangeContent = { [weak tableView] in
-            tableView?.beginUpdates()
+    public func subscribeTableView(tableViewGetter: @escaping (() -> UITableView?), startingIndex: Int = 0, section: Int = 0) {
+        self.willChangeContent = {
+            tableViewGetter()?.beginUpdates()
         }
-        self.insertFn = { [weak tableView] (idx) in
-            tableView?.insertRows(at: [IndexPath.init(row: idx + startingIndex, section: section)], with: .automatic)
+        self.insertFn = { (idx) in
+            tableViewGetter()?.insertRows(at: [IndexPath.init(row: idx + startingIndex, section: section)], with: .automatic)
         }
-        self.deleteFn = { [weak tableView] (idx) in
-            tableView?.deleteRows(at: [IndexPath.init(row: idx + startingIndex, section: section)], with: .fade)
+        self.deleteFn = { (idx) in
+            tableViewGetter()?.deleteRows(at: [IndexPath.init(row: idx + startingIndex, section: section)], with: .fade)
         }
-        self.updateFn = { [weak tableView] (idx) in
-            tableView?.reloadRows(at: [IndexPath.init(row: idx + startingIndex, section: section)], with: .automatic)
+        self.updateFn = { (idx) in
+            tableViewGetter()?.reloadRows(at: [IndexPath.init(row: idx + startingIndex, section: section)], with: .automatic)
         }
-        self.moveFn = { [weak tableView] (oldIdx, newIdx) in
-            tableView?.deleteRows(at: [IndexPath.init(row: oldIdx + startingIndex, section: section)], with: .automatic)
-            tableView?.insertRows(at: [IndexPath.init(row: newIdx + startingIndex, section: section)], with: .automatic)
+        self.moveFn = { (oldIdx, newIdx) in
+            tableViewGetter()?.deleteRows(at: [IndexPath.init(row: oldIdx + startingIndex, section: section)], with: .automatic)
+            tableViewGetter()?.insertRows(at: [IndexPath.init(row: newIdx + startingIndex, section: section)], with: .automatic)
         }
-        self.fullReloadFn = { [weak tableView] in
-            tableView?.reloadData()
+        self.fullReloadFn = {
+            tableViewGetter()?.reloadData()
         }
-        self.didChangeContent = { [weak tableView] in
-            tableView?.endUpdates()
+        self.didChangeContent = {
+            tableViewGetter()?.endUpdates()
         }
     }
 }
 
-public extension UITableView {
-    public func subscribeToObservedSections<Type>(observedLazySeqs: GeneratedSeq<ObservedLazySeq<Type>>, startingRows: [Int] = [], startingSection: Int = 0) {
+public protocol TableViewRowSubscriber {
+    func subscribeTableView(tableViewGetter: @escaping (() -> UITableView?), startingIndex: Int, section: Int)
+}
+
+extension LazySeq where Iterator.Element: TableViewRowSubscriber {
+    public func subscribeTableViewToObservedSections(tableViewGetter: @escaping (() -> UITableView?),
+                                                     startingRows: [Int] = [],
+                                                     startingSection: Int = 0) {
+        let observedLazySeqs = self
         for (section, observedLazySeq) in observedLazySeqs.enumerated() {
             var startingRow = 0
             if section < startingRows.count {
                 startingRow = startingRows[section]
             }
-            observedLazySeq.subscribeTableView(tableView: self, startingIndex: startingRow, section: section + startingSection)
+            observedLazySeq.subscribeTableView(tableViewGetter: tableViewGetter, startingIndex: startingRow, section: section + startingSection)
         }
     }
 }
