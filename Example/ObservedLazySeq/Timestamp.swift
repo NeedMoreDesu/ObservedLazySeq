@@ -12,20 +12,21 @@ import ObservedLazySeq
 import LazySeq
 
 extension Timestamp {
-    var second: String {
-        let calendar = Calendar.current
-        
-        let second = calendar.component(.second, from: self.time!)
-        return "\(second)s"
-    }
-    
     class func entityDescription(context: NSManagedObjectContext) -> NSEntityDescription {
         return NSEntityDescription.entity(forEntityName: "Timestamp", in: context)!
     }
     
     class func create(context: NSManagedObjectContext = CoreData.shared.dataStack.mainContext) -> Timestamp {
         let timestamp = Timestamp(entity: self.entityDescription(context: context), insertInto: context)
-        timestamp.time = Date()
+        
+        let currentDate = Date()
+        
+        let calendar = Calendar.current
+        let second = calendar.component(.second, from: currentDate)
+
+        timestamp.time = currentDate
+        timestamp.second = Int16(second)
+        
         return timestamp
     }
     

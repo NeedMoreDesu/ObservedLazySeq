@@ -14,6 +14,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     struct CellModel {
         var cellTitle: String
     }
+    
+    struct SectionModel {
+        var sectionTitle: String
+    }
 
     @IBOutlet weak var tableView: UITableView!
     weak var tableViewWeUse: UITableView!
@@ -27,6 +31,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             self.tableView?.reloadData()
         }
     }
+    var sectionModels: GeneratedSeq<SectionModel>!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,19 +42,25 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             let cellModel = CellModel(cellTitle: "\(timestamp.time!)")
             return cellModel
         })
+        self.sectionModels = self.timestamps.map({ (section) -> SectionModel in
+            let second = section.first()?.second ?? 0
+            let sectionModel = SectionModel(sectionTitle: "\(second)s")
+            return sectionModel
+        })
+        
         // oops, our tableView is loaded after observedSections is being set
         // but because tableView is passed as getter, it's no big deal
         self.tableViewWeUse = self.tableView
         
-        self.generateTimestampEvery2sec()
+        self.generateTimestampEvery1sec()
     }
 
-    func generateTimestampEvery2sec() {
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) { [weak self] in
+    func generateTimestampEvery1sec() {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) { [weak self] in
             let _ = Timestamp.create()
             CoreData.shared.save()
             
-            self?.generateTimestampEvery2sec()
+            self?.generateTimestampEvery1sec()
         }
     }
 
@@ -68,6 +79,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         cell.textLabel?.text = cellModel.cellTitle
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        let sectionModel = self.sectionModels[section]
+        return sectionModel.sectionTitle
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
