@@ -11,8 +11,7 @@ import LazySeq
 
 open class ObservedLazySeq<Type> {
     public private(set) var strongRefs: [AnyObject]
-    
-    public var objs: GeneratedSeq<GeneratedSeq<Type>>!
+    public private(set) var objs: GeneratedSeq<GeneratedSeq<Type>>!
     
     public var willChangeContent: (() -> Void)?
     public var didChangeContent: (() -> Void)?

@@ -22,7 +22,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet weak var tableView: UITableView!
     weak var tableViewWeUse: UITableView!
 
-    var timestamps: GeneratedSeq<GeneratedSeq<Timestamp>>!
     var observed: ObservedLazySeq<CellModel>! {
         didSet {
             self.observed.subscribeTableView(tableViewGetter: { [weak self] () -> UITableView? in
@@ -31,17 +30,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             self.tableView?.reloadData()
         }
     }
+    var timestamps: GeneratedSeq<GeneratedSeq<Timestamp>>!
     var sectionModels: GeneratedSeq<SectionModel>!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         let observedSectionsOriginal = Timestamp.createObservedLazySeq()
-        self.timestamps = observedSectionsOriginal.objs
         self.observed = observedSectionsOriginal.map({ (timestamp) -> CellModel in
             let cellModel = CellModel(cellTitle: "\(timestamp.time!)")
             return cellModel
         })
+        self.timestamps = observedSectionsOriginal.objs // in case we want to delete it
         self.sectionModels = self.timestamps.map({ (section) -> SectionModel in
             let second = section.first()?.second ?? 0
             let sectionModel = SectionModel(sectionTitle: "\(second)s")
