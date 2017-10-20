@@ -19,9 +19,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     weak var tableViewWeUse: UITableView!
 
     var timestamps: GeneratedSeq<GeneratedSeq<Timestamp>>!
-    var observedSections: GeneratedSeq<ObservedLazySeq<CellModel>>! {
+    var observed: ObservedLazySeq<CellModel>! {
         didSet {
-            self.observedSections.subscribeTableViewToObservedSections(tableViewGetter: { [weak self] () -> UITableView? in
+            self.observed.subscribeTableView(tableViewGetter: { [weak self] () -> UITableView? in
                 return self?.tableViewWeUse // count be self?.tableView, but we explicitly show that we don't care if tableView is here at this moment, since we take it from `self` directly
             })
             self.tableView?.reloadData()
@@ -32,14 +32,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         super.viewDidLoad()
         
         let observedSectionsOriginal = Timestamp.createObservedLazySeq()
-        self.timestamps = observedSectionsOriginal.map({ (observed) -> GeneratedSeq<Timestamp> in
-            return observed.objs
-        })
-        self.observedSections = observedSectionsOriginal.map({ (observed) -> ObservedLazySeq<CellModel> in
-            return observed.map({ (timestamp) -> CellModel in
-                let cellModel = CellModel(cellTitle: "\(timestamp.time!)")
-                return cellModel
-            })
+        self.timestamps = observedSectionsOriginal.objs
+        self.observed = observedSectionsOriginal.map({ (timestamp) -> CellModel in
+            let cellModel = CellModel(cellTitle: "\(timestamp.time!)")
+            return cellModel
         })
         // oops, our tableView is loaded after observedSections is being set
         // but because tableView is passed as getter, it's no big deal
@@ -58,15 +54,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return self.observedSections.count
+        return self.observed.objs.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.observedSections[section].objs.count
+        return self.observed.objs[section].count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellModel = self.observedSections[indexPath.section].objs[indexPath.row]
+        let cellModel = self.observed.objs[indexPath.section][indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "main", for: indexPath)
         
         cell.textLabel?.text = cellModel.cellTitle

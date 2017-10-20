@@ -1,6 +1,6 @@
 PODS:
   - DATAStack (6.2.0)
-  - LazySeq (0.4.0)
+  - LazySeq (0.4.1)
   - Nimble (7.0.2)
   - ObservedLazySeq (0.1.0):
     - LazySeq
@@ -18,7 +18,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   DATAStack: 06d6a00f4fe84f11afdae2a6f47558f1087000e5
-  LazySeq: 5ab1d259d12fe18a19fcbfac8e0d46ef5250b8a4
+  LazySeq: 0187226954449b777dc4f2f7a9ce579fe65bdabb
   Nimble: bfe1f814edabba69ff145cb1283e04ed636a67f2
   ObservedLazySeq: 021cb7d0a3d2f2588fd0f3f472a388abe63d5310
   Quick: 58d203b1c5e27fff7229c4c1ae445ad7069a7a08

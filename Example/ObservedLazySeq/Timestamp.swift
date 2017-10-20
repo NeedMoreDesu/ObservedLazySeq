@@ -12,6 +12,13 @@ import ObservedLazySeq
 import LazySeq
 
 extension Timestamp {
+    var second: String {
+        let calendar = Calendar.current
+        
+        let second = calendar.component(.second, from: self.time!)
+        return "\(second)s"
+    }
+    
     class func entityDescription(context: NSManagedObjectContext) -> NSEntityDescription {
         return NSEntityDescription.entity(forEntityName: "Timestamp", in: context)!
     }
@@ -22,8 +29,11 @@ extension Timestamp {
         return timestamp
     }
     
-    class func createObservedLazySeq(context: NSManagedObjectContext = CoreData.shared.dataStack.mainContext) -> LazySeq<ObservedLazySeq<Timestamp>> {
-        let managedObjectsObserved = CoreDataObserver<Timestamp>.create(entityName: "Timestamp", primaryKey: "time", managedObjectContext: context)
+    class func createObservedLazySeq(context: NSManagedObjectContext = CoreData.shared.dataStack.mainContext) -> ObservedLazySeq<Timestamp> {
+        var params = FetchRequestParameters()
+        params.sectionNameKeyPath = "second"
+        params.sortDescriptors = [NSSortDescriptor(key: "second", ascending: true), NSSortDescriptor(key: "time", ascending: true)]
+        let managedObjectsObserved = CoreDataObserver<Timestamp>.create(entityName: "Timestamp", primaryKey: "time", managedObjectContext: context, params: params)
         return managedObjectsObserved
     }
     
