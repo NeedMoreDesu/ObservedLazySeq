@@ -13,6 +13,7 @@ import LazySeq
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     struct CellModel {
         var cellTitle: String
+        var deleteCellFn: (() -> Void)
     }
     
     struct SectionModel {
@@ -30,22 +31,24 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             self.tableView?.reloadData()
         }
     }
-    var timestamps: GeneratedSeq<GeneratedSeq<Timestamp>>!
     var sectionModels: GeneratedSeq<SectionModel>!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         let observedSectionsOriginal = Timestamp.createObservedLazySeq()
-        self.observed = observedSectionsOriginal.map({ (timestamp) -> CellModel in
-            let cellModel = CellModel(cellTitle: "\(timestamp.time!)")
-            return cellModel
-        })
-        self.timestamps = observedSectionsOriginal.objs // in case we want to delete it
-        self.sectionModels = self.timestamps.map({ (section) -> SectionModel in
+        self.sectionModels = observedSectionsOriginal.objs.map({ (section) -> SectionModel in
+            print("sectionmodel generate")
             let second = section.first()?.second ?? 0
             let sectionModel = SectionModel(sectionTitle: "\(second)s")
             return sectionModel
+        })
+        self.observed = observedSectionsOriginal.map({ (timestamp) -> CellModel in
+            print("cellmodel generate")
+            let cellModel = CellModel(cellTitle: "\(timestamp.time!)", deleteCellFn: {
+                timestamp.delete()
+            })
+            return cellModel
         })
         
         // oops, our tableView is loaded after observedSections is being set
@@ -87,8 +90,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let timestamp = self.timestamps[indexPath.section][indexPath.row]
-        timestamp.delete()
+        let cellModel = self.observed.objs[indexPath.section][indexPath.row]
+        cellModel.deleteCellFn()
     }
 }
 

@@ -11,7 +11,7 @@ import LazySeq
 
 open class ObservedLazySeq<Type> {
     public private(set) var strongRefs: [AnyObject]
-    public private(set) var objs: GeneratedSeq<GeneratedSeq<Type>>!
+    public private(set) var objs: GeneratedSeq<GeneratedSeq<Type>>
     
     public var willChangeContent: (() -> Void)?
     public var didChangeContent: (() -> Void)?
@@ -25,14 +25,18 @@ open class ObservedLazySeq<Type> {
 
     public var fullReloadFn: (() -> Void)?
     
-    public init(strongRefs: [AnyObject], objs: GeneratedSeq<GeneratedSeq<Type>>? = nil) {
+    public init(strongRefs: [AnyObject], objs: GeneratedSeq<GeneratedSeq<Type>>) {
         self.strongRefs = strongRefs
         self.objs = objs
     }
     
-    public func map<ReturnType>(_ transform: @escaping (Type) -> ReturnType) -> ObservedLazySeq<ReturnType> {
+    public func map<ReturnType>(_ transform: @escaping (Type) -> ReturnType, noStore: Bool = false) -> ObservedLazySeq<ReturnType> {
         let objs = self.objs.map { (row) -> GeneratedSeq<ReturnType> in
-            return row.map(transform)
+            var generatedSeq = row.map(transform)
+            if !noStore {
+                generatedSeq = generatedSeq.lazySeq()
+            }
+            return generatedSeq
         }.lazySeq()
         let observed = ObservedLazySeq<ReturnType>(strongRefs: self.strongRefs, objs: objs)
         self.subscribeDefault(observed: observed)
@@ -80,6 +84,7 @@ open class ObservedLazySeq<Type> {
             tableViewGetter()?.beginUpdates()
         }
         self.insertRowFn = { row, section in
+            (self.objs[section] as? LazySeq)?.resetStorage()
             var startingRow = 0
             if section < startingRows.count {
                 startingRow = startingRows[section]
@@ -87,6 +92,7 @@ open class ObservedLazySeq<Type> {
             tableViewGetter()?.insertRows(at: [IndexPath.init(row: row + startingRow, section: section + startingSection)], with: .automatic)
         }
         self.deleteRowFn = { row, section in
+            (self.objs[section] as? LazySeq)?.resetStorage()
             var startingRow = 0
             if section < startingRows.count {
                 startingRow = startingRows[section]
@@ -94,6 +100,7 @@ open class ObservedLazySeq<Type> {
             tableViewGetter()?.deleteRows(at: [IndexPath.init(row: row + startingRow, section: section + startingSection)], with: .fade)
         }
         self.updateRowFn = { row, section in
+            (self.objs[section] as? LazySeq)?.resetStorage()
             var startingRow = 0
             if section < startingRows.count {
                 startingRow = startingRows[section]
@@ -101,9 +108,11 @@ open class ObservedLazySeq<Type> {
             tableViewGetter()?.reloadRows(at: [IndexPath.init(row: row + startingRow, section: section + startingSection)], with: .automatic)
         }
         self.insertSectionFn = { section in
+            (self.objs as? LazySeq)?.resetStorage()
             tableViewGetter()?.insertSections([section + startingSection], with: .automatic)
         }
         self.deleteSectionFn = { section in
+            (self.objs as? LazySeq)?.resetStorage()
             tableViewGetter()?.deleteSections([section + startingSection], with: .fade)
         }
         self.fullReloadFn = {

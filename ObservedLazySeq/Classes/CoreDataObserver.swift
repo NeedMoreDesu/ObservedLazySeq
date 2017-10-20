@@ -82,7 +82,6 @@ open class CoreDataObserver<Type>: NSObject, NSFetchedResultsControllerDelegate 
     
     weak var observed: ObservedLazySeq<Type>?
     private func setupObservedSections() -> ObservedLazySeq<Type> {
-        let observed = ObservedLazySeq<Type>(strongRefs: [self])
         let objs = LazySeq(count: { () -> Int in
             return self.controller.sections?.count ?? 0
         }) { (sectionIdx, _) -> GeneratedSeq<Type> in
@@ -99,7 +98,7 @@ open class CoreDataObserver<Type>: NSObject, NSFetchedResultsControllerDelegate 
             })
         }
         
-        observed.objs = objs
+        let observed = ObservedLazySeq<Type>(strongRefs: [self], objs: objs)
         self.observed = observed
         
         return observed
