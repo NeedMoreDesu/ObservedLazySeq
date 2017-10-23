@@ -1,7 +1,7 @@
 PODS:
   - DATAStack (6.2.0)
   - DividableRange (0.1.1)
-  - LazySeq (0.5.3):
+  - LazySeq (0.5.4):
     - DividableRange (~> 0.1)
   - Nimble (7.0.2)
   - ObservedLazySeq (0.1.0):
@@ -21,7 +21,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   DATAStack: 06d6a00f4fe84f11afdae2a6f47558f1087000e5
   DividableRange: 1d855fc59a834f36a13f2b1c53cc69f2f0291b04
-  LazySeq: 64c487be1b8d866783a86a7f4b84a406e20de59f
+  LazySeq: b14e8822d34c6540065115c7400a5b0e5adc03f9
   Nimble: bfe1f814edabba69ff145cb1283e04ed636a67f2
   ObservedLazySeq: 021cb7d0a3d2f2588fd0f3f472a388abe63d5310
   Quick: 58d203b1c5e27fff7229c4c1ae445ad7069a7a08

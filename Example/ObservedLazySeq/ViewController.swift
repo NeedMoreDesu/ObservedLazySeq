@@ -23,6 +23,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet weak var tableView: UITableView!
     weak var tableViewWeUse: UITableView!
 
+    var oldObserved: ObservedLazySeq<Timestamp>!
     var observed: ObservedLazySeq<CellModel>! {
         didSet {
             self.observed.subscribeTableView(tableViewGetter: { [weak self] () -> UITableView? in
@@ -37,6 +38,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         super.viewDidLoad()
         
         let observedSectionsOriginal = Timestamp.createObservedLazySeq()
+        self.oldObserved = observedSectionsOriginal
         self.sectionModels = observedSectionsOriginal.objs.map({ (section) -> SectionModel in
 //            print("sectionmodel generate")
             let second = section.first()?.second ?? 0
