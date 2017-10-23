@@ -38,13 +38,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         let observedSectionsOriginal = Timestamp.createObservedLazySeq()
         self.sectionModels = observedSectionsOriginal.objs.map({ (section) -> SectionModel in
-            print("sectionmodel generate")
+//            print("sectionmodel generate")
             let second = section.first()?.second ?? 0
             let sectionModel = SectionModel(sectionTitle: "\(second)s")
             return sectionModel
         })
         self.observed = observedSectionsOriginal.map({ (timestamp) -> CellModel in
-            print("cellmodel generate")
+//            print("cellmodel generate")
             let cellModel = CellModel(cellTitle: "\(timestamp.time!)", deleteCellFn: {
                 timestamp.delete()
             })
@@ -85,8 +85,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        let sectionModel = self.sectionModels[section]
-        return sectionModel.sectionTitle
+        let sectionModel = self.sectionModels.get(section)
+        return sectionModel?.sectionTitle ?? "unknown"
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

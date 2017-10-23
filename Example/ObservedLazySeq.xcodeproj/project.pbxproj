@@ -316,6 +316,7 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests/Pods-ObservedLazySeq_Example-ObservedLazySeq_Tests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/DATAStack/DATAStack.framework",
+				"${BUILT_PRODUCTS_DIR}/DividableRange/DividableRange.framework",
 				"${BUILT_PRODUCTS_DIR}/LazySeq/LazySeq.framework",
 				"${BUILT_PRODUCTS_DIR}/ObservedLazySeq/ObservedLazySeq.framework",
 				"${BUILT_PRODUCTS_DIR}/Nimble/Nimble.framework",
@@ -324,6 +325,7 @@
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DATAStack.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DividableRange.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LazySeq.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObservedLazySeq.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Nimble.framework",
@@ -342,12 +344,14 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-ObservedLazySeq_Example/Pods-ObservedLazySeq_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/DATAStack/DATAStack.framework",
+				"${BUILT_PRODUCTS_DIR}/DividableRange/DividableRange.framework",
 				"${BUILT_PRODUCTS_DIR}/LazySeq/LazySeq.framework",
 				"${BUILT_PRODUCTS_DIR}/ObservedLazySeq/ObservedLazySeq.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DATAStack.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DividableRange.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LazySeq.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObservedLazySeq.framework",
 			);
