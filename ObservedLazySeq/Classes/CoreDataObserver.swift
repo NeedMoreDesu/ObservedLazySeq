@@ -104,12 +104,29 @@ open class CoreDataObserver<Type>: NSObject, NSFetchedResultsControllerDelegate 
         return observed
     }
     
+    private var deletions: [IndexPath] = []
+    private var insertions: [IndexPath] = []
+    private var updates: [IndexPath] = []
+    private var sectionDeletions: [Int] = []
+    private var sectionInsertions: [Int] = []
+    func resetChanges() {
+        self.deletions = []
+        self.insertions = []
+        self.updates = []
+        self.sectionDeletions = []
+        self.sectionInsertions = []
+    }
+    func applyChanges() {
+        self.observed?.applyChangesFn?(deletions, insertions, updates, sectionDeletions, sectionInsertions)
+        self.resetChanges()
+    }
+
     public func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        self.observed?.willChangeContent?()
+        self.resetChanges()
     }
     
     public func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        self.observed?.didChangeContent?()
+        self.applyChanges()
     }
     
     public func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>,
@@ -123,27 +140,22 @@ open class CoreDataObserver<Type>: NSObject, NSFetchedResultsControllerDelegate 
         }
         switch type {
         case .insert:
-            if let row = newIndexPath?.row,
-                let section = newIndexPath?.section {
-                self.observed?.insertRowFn?(row, section)
+            if let indexPath = newIndexPath {
+                self.insertions.append(indexPath)
             }
         case .delete:
-            if let row = indexPath?.row,
-                let section = indexPath?.section {
-                self.observed?.deleteRowFn?(row, section)
+            if let indexPath = indexPath {
+                self.deletions.append(indexPath)
             }
         case .update:
-            if let row = indexPath?.row,
-                let section = indexPath?.section {
-                self.observed?.updateRowFn?(row, section)
+            if let indexPath = indexPath {
+                self.updates.append(indexPath)
             }
         case .move:
-            if let oldRow = indexPath?.row,
-                let newRow = newIndexPath?.row,
-                let oldSection = indexPath?.section,
-                let newSection = newIndexPath?.section {
-                self.observed?.deleteRowFn?(oldSection, oldRow)
-                self.observed?.insertRowFn?(newSection, newRow)
+            if let oldIndexPath = indexPath,
+                let newIndexPath = newIndexPath {
+                self.deletions.append(oldIndexPath)
+                self.insertions.append(newIndexPath)
             }
         }
     }
@@ -154,12 +166,10 @@ open class CoreDataObserver<Type>: NSObject, NSFetchedResultsControllerDelegate 
                     for type: NSFetchedResultsChangeType) {
         switch (type) {
         case .insert:
-            (self.observed?.objs as? LazySeq)?.resetStorage()
-            self.observed?.insertSectionFn?(sectionIndex)
+            self.sectionInsertions.append(sectionIndex)
             break
         case .delete:
-            (self.observed?.objs as? LazySeq)?.resetStorage()
-            self.observed?.deleteSectionFn?(sectionIndex)
+            self.sectionDeletions.append(sectionIndex)
             break
         default:
             break
