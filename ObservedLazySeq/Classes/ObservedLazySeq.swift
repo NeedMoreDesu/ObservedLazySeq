@@ -29,7 +29,7 @@ open class ObservedLazySeq<Type> {
             }
             return generatedSeq
         }.lazySeq()
-        let observed = ObservedLazySeq<ReturnType>(strongRefs: self.strongRefs + [self], objs: objs)
+        let observed = ObservedLazySeq<ReturnType>(strongRefs: [self], objs: objs)
         self.subscribeDefault(observed: observed)
         return observed
     }
@@ -93,21 +93,11 @@ open class ObservedLazySeq<Type> {
                 return
             }
             
-            let objsCounts0 = self.objs.allObjects().map({$0.count})
             self.updateObjs(deletions: deletions,
                              insertions: insertions,
                              updates: updates,
                              sectionDeletions: sectionDeletions,
                              sectionInsertions: sectionInsertions)
-            let objsCounts1 = self.objs.allObjects().map({$0.count})
-            (self.objs as? LazySeq)?.resetStorage()
-            let objsCounts2 = self.objs.allObjects().map({$0.count})
-            if objsCounts1 != objsCounts2 {
-                print("deletions: \(deletions), insertions: \(insertions), updates: \(updates), sectionDeletions: \(sectionDeletions), sectionInsertions: \(sectionInsertions)")
-                print("objc count 0: \(objsCounts0)")
-                print("objc count 1: \(objsCounts1)")
-                print("objc count 2: \(objsCounts2)")
-            }
 
             let mappedDeletions = mapIndexPaths(deletions)
             let mappedInsertions = mapIndexPaths(insertions)
@@ -160,12 +150,12 @@ open class ObservedLazySeq<Type> {
             if oldIndex == newIndex {
                 return seq
             }
-//            if let oldLazySeq = seq as? LazySeq<Type>,
-//                let newLazySeq = generator.get(newIndex) as? LazySeq<Type> {
-//                // need to copy stored items, not the generator itself
-//                newLazySeq.storage = oldLazySeq.storage
-//                return newLazySeq
-//            }
+            if let oldLazySeq = seq as? LazySeq<Type>,
+                let newLazySeq = generator.get(newIndex) as? LazySeq<Type> {
+                // need to copy stored items, not the generator itself
+                newLazySeq.storage = oldLazySeq.storage
+                return newLazySeq
+            }
             return nil // oh, you are not LazySeq? Then nothing of value was lost
         })
     }
