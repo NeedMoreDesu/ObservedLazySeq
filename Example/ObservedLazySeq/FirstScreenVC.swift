@@ -36,7 +36,7 @@ class FirstScreenVC: UIViewController, FirstScreenView, UITableViewDelegate, UIT
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellModel = self.observed.objs[indexPath.section][indexPath.row]
+        let cellModel = self.observed.getItemAt(indexPath)
         let cell = tableView.dequeueReusableCell(withIdentifier: "main", for: indexPath)
         
         cell.textLabel?.text = cellModel.cellTitle
