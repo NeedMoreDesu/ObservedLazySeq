@@ -21,6 +21,10 @@ open class ObservedLazySeq<Type> {
         self.objs = objs
     }
     
+    public func getItemAt(_ indexPath: IndexPath) -> Type {
+        return self.objs[indexPath.section][indexPath.row]
+    }
+    
     public func map<ReturnType>(_ transform: @escaping (Type) -> ReturnType, noStore: Bool = false) -> ObservedLazySeq<ReturnType> {
         let objs = self.objs.map { (row) -> GeneratedSeq<ReturnType> in
             var generatedSeq = row.map(transform)

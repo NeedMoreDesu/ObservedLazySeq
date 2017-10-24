@@ -1,5 +1,5 @@
 //
-//  Timestamp.swift
+//  ApplicationStartRouter.swift
 //  ObservedLazySeq_Example
 //
 //  Created by Oleksii Horishnii on 10/24/17.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Timestamp {
-    // notice how there is no support fields, just what entity actually represents
-    let time: Date
+protocol ApplicationStartRouter: class {
+    func showFirstScreen()
 }
+

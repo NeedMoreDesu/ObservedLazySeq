@@ -3,6 +3,8 @@ use_frameworks!
 target 'ObservedLazySeq_Example' do
   pod 'ObservedLazySeq', :path => '../'
   pod 'DATAStack', '~> 6'
+  pod 'Swinject', '2.0.0'
+  pod 'SwinjectStoryboard', '1.0.0'
 
   target 'ObservedLazySeq_Tests' do
       pod 'Quick', '~> 1.2.0'
