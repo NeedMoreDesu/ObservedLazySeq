@@ -8,15 +8,18 @@
 
 import Foundation
 import Swinject
-import SwinjectStoryboard
 
 struct DependencyInjection {
     public static let shared = DependencyInjection()
 
     public let container: Container
 
-    init(container: Container = SwinjectStoryboard.defaultContainer) {
+    init(container: Container = Container()) {
         self.container = container
+    }
+    
+    func resolve<Type>() -> Type {
+        return self.container.resolve(Type.self)!
     }
     
     func setup() {
@@ -72,8 +75,3 @@ struct DependencyInjection {
     }
 }
 
-extension SwinjectStoryboard {
-    @objc class func setup() {
-        DependencyInjection.shared.setup()
-    }
-}

@@ -17,7 +17,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
-        let rounter = DependencyInjection.shared.container.resolve(ApplicationStartRouter.self)!
+        DependencyInjection.shared.setup()
+        let rounter: ApplicationStartRouter = DependencyInjection.shared.resolve()
         rounter.showFirstScreen()
         
         return true
