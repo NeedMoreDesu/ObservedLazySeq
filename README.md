@@ -35,7 +35,7 @@ let newObserved = observed.map({ (oldObject) -> NewObjectType in
 Then use it in your ViewController like that:
 
 ```swift
-var observed: ObservedLazySeq<YourType>! {
+    var observed: ObservedLazySeq<YourType>! {
         didSet {
             self.observed.subscribeTableView(tableViewGetter: { [weak self] () -> UITableView? in
                 return self?.tableView // we explicitly show that we don't care if tableView is here at this moment, since we take it from `self` directly
