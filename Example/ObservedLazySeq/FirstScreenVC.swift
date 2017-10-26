@@ -17,7 +17,7 @@ class FirstScreenVC: UIViewController, FirstScreenView, UITableViewDelegate, UIT
     //MARK:- FirstScreenView Interface
     var presenter: FirstScreenPresenter!
 
-    var observed: ObservedLazySeq<FirstScreenCellModel>! {
+    var observed: ObservedLazySeq<GeneratedSeq<GeneratedSeq<FirstScreenCellModel>>>! {
         didSet {
             self.observed.subscribeTableView(tableViewGetter: { [weak self] () -> UITableView? in
                 return self?.tableView // we explicitly show that we don't care if tableView is here at this moment, since we take it from `self` directly

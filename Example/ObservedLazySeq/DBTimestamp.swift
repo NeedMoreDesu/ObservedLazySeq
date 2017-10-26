@@ -31,7 +31,7 @@ extension DBTimestamp {
         return timestamp
     }
     
-    class func createObservedLazySeq(context: NSManagedObjectContext = CoreData.shared.dataStack.mainContext) -> ObservedLazySeq<DBTimestamp> {
+    class func createObservedLazySeq(context: NSManagedObjectContext = CoreData.shared.dataStack.mainContext) -> ObservedLazySeq<GeneratedSeq<GeneratedSeq<DBTimestamp>>> {
         var params = FetchRequestParameters()
         params.sectionNameKeyPath = "second"
         params.sortDescriptors = [NSSortDescriptor(key: "second", ascending: true), NSSortDescriptor(key: "time", ascending: true)]

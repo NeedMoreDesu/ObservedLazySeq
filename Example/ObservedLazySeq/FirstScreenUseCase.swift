@@ -16,13 +16,13 @@ struct Seconds {
 
 protocol FirstScreenOutput: class {
     // could map it to something else, but Timestamp is so simple..
-    var observed: ObservedLazySeq<Timestamp>! { get set }
+    var observed: ObservedLazySeq<GeneratedSeq<GeneratedSeq<Timestamp>>>! { get set }
     var sectionSeconds: GeneratedSeq<Seconds>! { get set }
 }
 
 protocol TimestampRouter {
     func createTimestamp() -> Timestamp
-    func observed() -> ObservedLazySeq<Timestamp>
+    func observed() -> ObservedLazySeq<GeneratedSeq<GeneratedSeq<Timestamp>>>
     func sectionSeconds() -> GeneratedSeq<Seconds>
     func deleteTimestampAt(indexPath: IndexPath)
 }

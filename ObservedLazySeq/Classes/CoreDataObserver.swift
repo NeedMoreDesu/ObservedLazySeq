@@ -65,7 +65,7 @@ open class CoreDataObserver<Type>: NSObject, NSFetchedResultsControllerDelegate 
     public class func create(entityName: String,
                       primaryKey: String,
                       managedObjectContext: NSManagedObjectContext,
-                      params: FetchRequestParameters? = nil) -> ObservedLazySeq<Type> {
+                      params: FetchRequestParameters? = nil) -> ObservedLazySeq<GeneratedSeq<GeneratedSeq<Type>>> {
         let observer = CoreDataObserver(entityName: entityName,
                                         primaryKey: primaryKey,
                                         managedObjectContext: managedObjectContext,
@@ -74,14 +74,14 @@ open class CoreDataObserver<Type>: NSObject, NSFetchedResultsControllerDelegate 
         return observer.setupObservedSections()
     }
     
-    public class func create(fetchedResultController: NSFetchedResultsController<Type>) -> ObservedLazySeq<Type> {
+    public class func create(fetchedResultController: NSFetchedResultsController<Type>) -> ObservedLazySeq<GeneratedSeq<GeneratedSeq<Type>>> {
         let observer = CoreDataObserver(fetchedResultController: fetchedResultController)
         
         return observer.setupObservedSections()
     }
     
-    weak var observed: ObservedLazySeq<Type>?
-    private func setupObservedSections() -> ObservedLazySeq<Type> {
+    weak var observed: ObservedLazySeq<GeneratedSeq<GeneratedSeq<Type>>>?
+    private func setupObservedSections() -> ObservedLazySeq<GeneratedSeq<GeneratedSeq<Type>>> {
         let objs = LazySeq(count: { () -> Int in
             return self.controller.sections?.count ?? 0
         }) { (sectionIdx, _) -> GeneratedSeq<Type> in
@@ -98,7 +98,7 @@ open class CoreDataObserver<Type>: NSObject, NSFetchedResultsControllerDelegate 
             })
         }
         
-        let observed = ObservedLazySeq<Type>(strongRefs: [self], objs: objs)
+        let observed = ObservedLazySeq<GeneratedSeq<GeneratedSeq<Type>>>(strongRefs: [self], objs: objs)
         self.observed = observed
         
         return observed

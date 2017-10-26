@@ -20,7 +20,7 @@ struct FirstScreenSectionModel {
 
 protocol FirstScreenView: class {
     var presenter: FirstScreenPresenter! { get set }
-    var observed: ObservedLazySeq<FirstScreenCellModel>! { get set }
+    var observed: ObservedLazySeq<GeneratedSeq<GeneratedSeq<FirstScreenCellModel>>>! { get set }
     var sectionModels: GeneratedSeq<FirstScreenSectionModel>! { get set }
 }
 
@@ -31,7 +31,7 @@ protocol FirstScreenPresenter: class {
 }
 
 class FirstScreenPresenterImplementation: FirstScreenPresenter, FirstScreenOutput {
-    var observed: ObservedLazySeq<Timestamp>!
+    var observed: ObservedLazySeq<GeneratedSeq<GeneratedSeq<Timestamp>>>!
     var sectionSeconds: GeneratedSeq<Seconds>!
     
     var useCase: FirstScreenUseCase!

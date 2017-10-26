@@ -11,40 +11,76 @@ import LazySeq
 
 open class ObservedLazySeq<Type> {
     public private(set) var strongRefs: [AnyObject]
-    public private(set) var objs: GeneratedSeq<GeneratedSeq<Type>>
+    public private(set) var objs: Type
     
     public var applyChangesFn:((_ deletions: [IndexPath], _ insertions: [IndexPath], _ updates: [IndexPath], _ sectionDeletions: [Int], _ sectionInsertions: [Int]) -> Void)?
     public var fullReloadFn: (() -> Void)?
     
-    public init(strongRefs: [AnyObject], objs: GeneratedSeq<GeneratedSeq<Type>>) {
+    public init(strongRefs: [AnyObject], objs: Type) {
         self.strongRefs = strongRefs
         self.objs = objs
     }
-    
-    public func getItemAt(_ indexPath: IndexPath) -> Type {
-        return self.objs[indexPath.section][indexPath.row]
+}
+
+extension ObservedLazySeq where Type: Collection {
+    public typealias Type1d = Type.Element
+    func getItem(idx: Int) -> Type1d {
+        let index = self.objs.index(self.objs.startIndex, offsetBy: numericCast(idx))
+        let item = self.objs[index]
+        
+        return item
     }
     
-    public func map<ReturnType>(_ transform: @escaping (Type) -> ReturnType, noStore: Bool = false) -> ObservedLazySeq<ReturnType> {
-        let objs = self.objs.map { (row) -> GeneratedSeq<ReturnType> in
-            var generatedSeq = row.map(transform)
+    func count() -> Int {
+        return numericCast(self.objs.count)
+    }
+}
+
+extension ObservedLazySeq where Type: Collection, Type.Element: Collection {
+    public typealias Type2d = Type1d.Element
+    func getItem(row: Int, section: Int) -> Type2d {
+        let section = self.getItem(idx: section)
+        let rowIndex = section.index(section.startIndex, offsetBy: numericCast(row))
+        let item = section[rowIndex]
+        
+        return item
+    }
+    
+    func columns() -> Int {
+        return self.count()
+    }
+    
+    func rows(section: Int) -> Int {
+        return numericCast(self.getItem(idx: section).count)
+    }
+}
+
+
+extension ObservedLazySeq where Type: Collection, Type.Element: Collection {
+    public func getItemAt(_ indexPath: IndexPath) -> Type2d {
+        return self.getItem(row: indexPath.row, section: indexPath.section)
+    }
+    
+    public func map<ReturnType>(_ transform: @escaping (Type2d) -> ReturnType, noStore: Bool = false) -> ObservedLazySeq<GeneratedSeq<GeneratedSeq<ReturnType>>> {
+        let objs = self.objs.generatedSeq().map { (row) -> GeneratedSeq<ReturnType> in
+            var generatedSeq = row.generatedSeq().map(transform)
             if !noStore {
                 generatedSeq = generatedSeq.lazySeq()
             }
             return generatedSeq
-        }.lazySeq()
-        let observed = ObservedLazySeq<ReturnType>(strongRefs: [self], objs: objs)
+            }
+        let observed = ObservedLazySeq<GeneratedSeq<GeneratedSeq<ReturnType>>>(strongRefs: [self], objs: objs)
         self.subscribeDefault(observed: observed)
         return observed
     }
     
-    public func subscribeDefault<ResultType>(observed: ObservedLazySeq<ResultType>) {
+    public func subscribeDefault<ResultType>(observed: ObservedLazySeq<GeneratedSeq<GeneratedSeq<ResultType>>>) {
         self.fullReloadFn = { [weak self] in
             guard let `self` = self else {
                 return
             }
-
-            (self.objs as? LazySeq)?.resetStorage()
+            
+            (self.objs as? LazySeq<Type1d>)?.resetStorage()
             observed.fullReloadFn?()
         }
         
@@ -85,8 +121,8 @@ open class ObservedLazySeq<Type> {
             guard let `self` = self else {
                 return
             }
-
-            (self.objs as? LazySeq)?.resetStorage()
+            
+            (self.objs as? LazySeq<Type1d>)?.resetStorage()
             tableViewGetter()?.reloadData()
         }
         self.applyChangesFn = { [weak self] deletions, insertions, updates, sectionDeletions, sectionInsertions in
@@ -98,18 +134,18 @@ open class ObservedLazySeq<Type> {
             }
             
             self.updateObjs(deletions: deletions,
-                             insertions: insertions,
-                             updates: updates,
-                             sectionDeletions: sectionDeletions,
-                             sectionInsertions: sectionInsertions)
-
+                            insertions: insertions,
+                            updates: updates,
+                            sectionDeletions: sectionDeletions,
+                            sectionInsertions: sectionInsertions)
+            
             let mappedDeletions = mapIndexPaths(deletions)
             let mappedInsertions = mapIndexPaths(insertions)
             let mappedUpdates = mapIndexPaths(updates)
             let mappedSectionDeletions = mapSections(sectionDeletions)
             let mappedSectionInsertions = mapSections(sectionInsertions)
-
-
+            
+            
             tableView.beginUpdates()
             tableView.deleteSections(IndexSet(mappedSectionDeletions), with: .fade)
             tableView.insertSections(IndexSet(mappedSectionInsertions), with: .automatic)
@@ -121,7 +157,7 @@ open class ObservedLazySeq<Type> {
     }
     
     private func updateObjs(deletions: [IndexPath], insertions: [IndexPath], updates: [IndexPath], sectionDeletions: [Int], sectionInsertions: [Int]) {
-        guard let objs = self.objs as? LazySeq else {
+        guard let objs = self.objs as? LazySeq<GeneratedSeq<Type2d>> else {
             return // nothing is saved anyway
         }
         let deletionsGrouped = Dictionary.init(grouping: deletions, by: { (indexPath) -> Int in
@@ -135,7 +171,7 @@ open class ObservedLazySeq<Type> {
         })
         
         for (sectionIdx, section) in objs.storage {
-            guard let section = section as? LazySeq else {
+            guard let section = section as? LazySeq<Type2d> else {
                 continue
             }
             if let _ = sectionDeletions.first(where: { $0 == sectionIdx}) {
@@ -150,12 +186,12 @@ open class ObservedLazySeq<Type> {
             section.applyChanges(deletions: deletions, insertions: insertions, updates: updates)
         }
         let generator = objs.generatedSeq()
-        objs.applyChanges(deletions: sectionDeletions, insertions: sectionInsertions, updates: [], copyFn: { (oldIndex, newIndex, seq) -> GeneratedSeq<Type>? in
+        objs.applyChanges(deletions: sectionDeletions, insertions: sectionInsertions, updates: [], copyFn: { (oldIndex, newIndex, seq) -> GeneratedSeq<Type2d>? in
             if oldIndex == newIndex {
                 return seq
             }
-            if let oldLazySeq = seq as? LazySeq<Type>,
-                let newLazySeq = generator.get(newIndex) as? LazySeq<Type> {
+            if let oldLazySeq = seq as? LazySeq<Type2d>,
+                let newLazySeq = generator.get(newIndex) as? LazySeq<Type2d> {
                 // need to copy stored items, not the generator itself
                 newLazySeq.storage = oldLazySeq.storage
                 return newLazySeq

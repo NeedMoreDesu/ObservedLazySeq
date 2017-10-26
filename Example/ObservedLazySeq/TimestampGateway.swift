@@ -16,7 +16,7 @@ class TimestampGateway: TimestampRouter {
         return Timestamp(time: dbobj.time!)
     }
     
-    func observed() -> ObservedLazySeq<Timestamp> {
+    func observed() -> ObservedLazySeq<GeneratedSeq<GeneratedSeq<Timestamp>>> {
         return self.databaseObserved.map(self.toTimestampEntity)
     }
     
