@@ -4,6 +4,8 @@
 [![License](https://img.shields.io/cocoapods/l/ObservedLazySeq.svg?style=flat)](http://cocoapods.org/pods/ObservedLazySeq)
 [![Platform](https://img.shields.io/cocoapods/p/ObservedLazySeq.svg?style=flat)](http://cocoapods.org/pods/ObservedLazySeq)
 
+### This pod is outdated, [Observed](https://github.com/NeedMoreDesu/Observed) new version of the pod
+
 This pod focuses on building wrapper for objects that are:
 
 1. Loaded lazily, like batch requests from database
