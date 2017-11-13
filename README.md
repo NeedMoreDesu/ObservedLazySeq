@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/cocoapods/l/ObservedLazySeq.svg?style=flat)](http://cocoapods.org/pods/ObservedLazySeq)
 [![Platform](https://img.shields.io/cocoapods/p/ObservedLazySeq.svg?style=flat)](http://cocoapods.org/pods/ObservedLazySeq)
 
-### This pod is outdated, [Observed](https://github.com/NeedMoreDesu/Observed) new version of the pod
+# This pod is outdated, [Observed](https://github.com/NeedMoreDesu/Observed) is new version of the pod
 
 This pod focuses on building wrapper for objects that are:
 
@@ -48,7 +48,7 @@ Then use it in your ViewController like that:
     func numberOfSections(in tableView: UITableView) -> Int {
         return self.observed.objs.count
     }
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.observed.objs[section].count
     }
